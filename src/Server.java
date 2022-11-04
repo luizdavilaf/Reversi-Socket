@@ -51,10 +51,14 @@ public class Server {
 		Server server = new Server();
 		ArrayList<Player> players = server.acceptConnections();
 		System.out.println(players.toString());
+		Game game = new Game();
+		game.startGame();
 		
 		
 		
 
 	}
+
+	
 
 }
