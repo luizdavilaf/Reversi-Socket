@@ -1,4 +1,4 @@
-package gameSocket;
+
 
 import java.net.SocketAddress;
 
@@ -27,4 +27,10 @@ public class Player {
     public void setColor(String color) {
         this.color = color;
     }
+
+    @Override
+    public String toString() {
+        return "Player [remoteIp=" + remoteIp + ", color=" + color + "]";
+    }
+    
 }

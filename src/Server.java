@@ -1,4 +1,4 @@
-package gameSocket;
+
 
 import java.net.*;
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ public class Server {
 				SocketAddress ip = s.getRemoteSocketAddress();
 				Player p = new Player(ip, color);
 				players.add(p);
-				System.out.println("Jogador #"+ numJogadores + "conectou.");
+				System.out.println("Jogador #"+ numJogadores + " conectou.");
 			}
 			System.out.println("Dois jogadores conectados. Iniciando jogo...");
 			
