@@ -15,6 +15,7 @@ public class Server {
 		numJogadores=0;
 		try {
 			ss = new ServerSocket(50001);
+			
 		} catch (IOException e) {
 			System.out.println("Erro no construtor do servidor!!");
 		}		
@@ -26,15 +27,15 @@ public class Server {
 		try {
 			System.out.println("Aguardando jogadores...");
 			while(numJogadores<2){
-				Socket s = ss.accept();				
+				Socket s = ss.accept();									
 				numJogadores++;
 				if(numJogadores==1){
 					color="white";
 				}else{
 					color="black";
 				}
-				SocketAddress ip = s.getRemoteSocketAddress();
-				Player p = new Player(ip, color);
+				
+				Player p = new Player(s, color);
 				players.add(p);
 				System.out.println("Jogador #"+ numJogadores + " conectou.");
 			}
@@ -46,12 +47,13 @@ public class Server {
 		return players;		
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		
 		Server server = new Server();
 		ArrayList<Player> players = server.acceptConnections();
 		System.out.println(players.toString());
-		Game game = new Game();
+		
+		Game game = new Game(players);
 		game.startGame();
 		
 		

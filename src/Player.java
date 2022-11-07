@@ -1,24 +1,19 @@
 
 
-import java.net.SocketAddress;
+import java.net.Socket;
+
 
 public class Player {
 
-    private SocketAddress remoteIp;
+    private Socket socket;
     private String color;
 
-    public Player(SocketAddress remoteIp, String color){
-        this.remoteIp = remoteIp;
+    public Player(Socket socket, String color){
+        this.socket = socket;
         this.color= color;
     }
     
-    public SocketAddress getRemoteIp() {
-        return remoteIp;
-    }
 
-    public void setRemoteIp(SocketAddress remoteIp) {
-        this.remoteIp = remoteIp;
-    }
 
     public String getColor() {
         return color;
@@ -30,7 +25,19 @@ public class Player {
 
     @Override
     public String toString() {
-        return "Player [remoteIp=" + remoteIp + ", color=" + color + "]";
+        return "Player [remoteIp=" + socket + ", color=" + color + "]";
+    }
+
+
+
+    public Socket getSocket() {
+        return socket;
+    }
+
+
+
+    public void setSocket(Socket socket) {
+        this.socket = socket;
     }
     
 }

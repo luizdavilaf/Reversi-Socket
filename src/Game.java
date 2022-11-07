@@ -1,7 +1,12 @@
 import java.util.Scanner;
+
+import javax.swing.text.PlainDocument;
+
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 
 
 
@@ -16,14 +21,15 @@ public class Game
     private Scanner regScan; //scanner that is used throughout the program
     private String winner;  //as the game ends, stores the winner's colour
     private boolean surrender; //if someone decides to surrender, becomes true and stops the loop in gameFlow()
+    private ArrayList<Player> players = new ArrayList<>(); 
    
-    public static void main(String args[]) {
-        Game game = new Game();
+   /*  public static void main(String args[]) {
+        Game game = new Game(ArrayList players);
         game.startGame();
-    }
+    } */
 
 
-    public Game()
+    public Game(ArrayList<Player> players)
     {
         fieldObj = new Field();
         regScan = new Scanner(System.in);
@@ -32,13 +38,15 @@ public class Game
         curPlayer = true; //sets current player to white
         surrender = false;
         winner = "UNDEFINED"; //sets winned to undefined as the game has just begun
+        this.players =players;
     }
     
     /**
      * Starts the game loading the game field, settins starting discs and sets the first player to white
+     * @throws IOException
      * 
      */
-    public void startGame()
+    public void startGame() throws IOException
     {
         field = fieldObj.setField();
         curPlayer = fieldObj.getFirstTurn();
@@ -87,9 +95,10 @@ public class Game
     
     /**
      * Represents the flow of the game, getting user turn inputs, processing them etc.
+     * @throws IOException
      * 
      */
-    public void gameFlow()
+    public void gameFlow() throws IOException
     {
         //variables that determine if the first move was already made
         int firstMove = 0;              
@@ -220,12 +229,24 @@ public class Game
     
     /**
      * Updates and prints the counters for the number of white/black discs on the board
+     * @throws IOException
      */
-    public void displayCounters()
+    public void displayCounters() throws IOException
     {
         setCounters();
-        System.out.println("\nWhite: " + white);
-        System.out.println("Black: " + black + "\n\n");
+        String print;
+        print = ("\nWhite: " + white + "\nBlack: " + black + "\n\n");
+        //System.out.println("\nWhite: " + white);
+        //System.out.println("Black: " + black + "\n\n");
+        System.out.println(print);
+        byte[] output1 = print.getBytes();
+        
+        for(Player p : players){
+             
+             OutputStream o = p.getSocket().getOutputStream();
+             o.write(output1);
+             
+        }
     }
     
     /**
@@ -581,9 +602,10 @@ public class Game
    
     /**
      * Surrenders the game, displaying the winner and setting the surrender variable's value so that it will break out of gameFlow infinite loop and return to main menu
+     * @throws IOException
      * 
      */
-    public void surrender()
+    public void surrender() throws IOException
     {
         surrender = true;
         String colour = "White";
