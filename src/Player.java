@@ -7,10 +7,12 @@ public class Player {
 
     private Socket socket;
     private String color;
+    private String name;
 
-    public Player(Socket socket, String color){
+    public Player(Socket socket, String color, String name){
         this.socket = socket;
         this.color= color;
+        this.name = name;
     }
     
 
@@ -38,6 +40,18 @@ public class Player {
 
     public void setSocket(Socket socket) {
         this.socket = socket;
+    }
+
+
+
+    public String getName() {
+        return name;
+    }
+
+
+
+    public void setName(String name) {
+        this.name = name;
     }
     
 }

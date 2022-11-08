@@ -8,6 +8,7 @@ public class Server {
 	private ServerSocket ss;
 	private int numJogadores;
 	private String color;
+	private String nome;
 	private ArrayList<Player> players = new ArrayList<>();
 
 	public Server(){
@@ -34,6 +35,7 @@ public class Server {
 				}else{
 					color="black";
 				}
+				
 				
 				Player p = new Player(s, color);
 				players.add(p);

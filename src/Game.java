@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 
@@ -194,8 +195,19 @@ public class Game
             //if there were moves left for the current player, ask him to make a move
             if(movesLeft.get(colour))
             {
+                String print= colour + " player's turn:";
+                if(curPlayer){
+                    byte[] output1 = print.getBytes();
+                    OutputStream o = players.get(0).getSocket().getOutputStream();
+                    o.write(output1);
+                    InputStream i = players.get(0).getSocket().getInputStream();
+                    
+
+                   // userInput = 
+        
+                }
                 System.out.println(colour + " player's turn:");
-                userInput = regScan.nextLine();
+                //userInput = regScan.nextLine();
                 
                 validMove = checkTurnInput(userInput); // move is 'gramatically' correct
                 if (validMove) {
