@@ -22,8 +22,6 @@ public class Server {
 		}		
 	}
 
-	
-
 	public ArrayList<Player> acceptConnections(){
 		try {
 			System.out.println("Aguardando jogadores...");
@@ -51,6 +49,20 @@ public class Server {
 			System.out.println("Erro ao aceitar conexões...");
 		}
 		return players;		
+	}
+
+	public void broadcastacceptConnections() {
+		try {
+			System.out.println("enviando objeto");
+			while(numJogadores<2){
+				
+			}
+			System.out.println("Dois jogadores conectados. Iniciando jogo...");
+			
+		} catch (Exception e) {
+			System.out.println("Erro ao aceitar conexões...");
+		}
+			
 	}
 
 	public static void main(String[] args) throws IOException {

@@ -13,18 +13,20 @@ public class Cliente {
 			Socket c = new Socket("192.168.0.53", 50001);
 			InputStream i = c.getInputStream();
 			OutputStream o = c.getOutputStream();
-			
+			String nome=null;
 			byte [] line = new byte[100];
 			do{
 				
 				System.out.println("Digite seu nome");
-				System.out.println(line);
+				System.out.println("nome"+nome);
 				System.in.read(line);
 				o.write(line);
 				i.read(line);
+				nome = new String(nome);
+
 				
 									
-			}while(true);
+			}while(nome==null);
 		}
 		catch (Exception err){
 			System.err.println(err);
@@ -64,7 +66,7 @@ public class Cliente {
 				i.read(line);
 				str = new String(line);
 				System.out.println(str);
-				c.close();
+				
 				
 			}
 			
