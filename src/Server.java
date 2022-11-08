@@ -35,9 +35,13 @@ public class Server {
 				}else{
 					color="black";
 				}
-				
-				
-				Player p = new Player(s, color);
+				byte [] line = new byte[100];
+				InputStream i = s.getInputStream();
+				OutputStream o = s.getOutputStream();
+				o.write(line);
+				i.read(line);
+				nome = new String(line);
+				Player p = new Player(s, color,nome);
 				players.add(p);
 				System.out.println("Jogador #"+ numJogadores + " conectou.");
 			}
@@ -55,7 +59,7 @@ public class Server {
 		ArrayList<Player> players = server.acceptConnections();
 		System.out.println(players.toString());
 		
-		Game game = new Game(players);
+		Game game = new Game(players, server);
 		game.startGame();
 		
 		

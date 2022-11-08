@@ -13,16 +13,18 @@ public class Cliente {
 			Socket c = new Socket("192.168.0.53", 50001);
 			InputStream i = c.getInputStream();
 			OutputStream o = c.getOutputStream();
-			String str;
+			
+			byte [] line = new byte[100];
 			do{
-				byte [] line = new byte[100];
-				System.out.println("Digite algo");
+				
+				System.out.println("Digite seu nome");
+				System.out.println(line);
 				System.in.read(line);
 				o.write(line);
 				i.read(line);
-				str = new String(line);
-				System.out.println(str);					
-			}while(!str.trim().equals("bye"));
+				
+									
+			}while(true);
 		}
 		catch (Exception err){
 			System.err.println(err);

@@ -30,7 +30,7 @@ public class Game
     } */
 
 
-    public Game(ArrayList<Player> players)
+    public Game(ArrayList<Player> players, Server server)
     {
         fieldObj = new Field();
         regScan = new Scanner(System.in);
@@ -39,7 +39,7 @@ public class Game
         curPlayer = true; //sets current player to white
         surrender = false;
         winner = "UNDEFINED"; //sets winned to undefined as the game has just begun
-        this.players =players;
+        this.players =players;        
     }
     
     /**
