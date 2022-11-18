@@ -23,6 +23,28 @@ public class Game
     private String winner;  //as the game ends, stores the winner's colour
     private boolean surrender; //if someone decides to surrender, becomes true and stops the loop in gameFlow()
     private ArrayList<Player> players = new ArrayList<>(); 
+    private String message;
+
+public String sendAndReceiveMsgs(String msg, int playerIndex) throws IOException{    
+    byte[] output1 = msg.getBytes();
+    OutputStream o = players.get(playerIndex).getSocket().getOutputStream();
+    o.write(output1);
+    InputStream i = players.get(playerIndex).getSocket().getInputStream();
+    i.read(output1);
+
+    msg = new String(output1);
+
+    return msg;
+    
+}
+
+public void sendMessage(String msg, int playerIndex) throws IOException {
+    byte[] output1 = msg.getBytes();
+    OutputStream o = players.get(playerIndex).getSocket().getOutputStream();
+    o.write(output1);
+    o.flush();
+}
+
    
    /*  public static void main(String args[]) {
         Game game = new Game(ArrayList players);
@@ -174,9 +196,22 @@ public class Game
                 moves = true;
                 int moveCount = 0; //stores the number of printed moves not to print more than 5 moves in a line, to make it more clear
                 System.out.println("Available moves: (" + movesList.size() + ")"); //also prints the number of available moves
+                message = "Available moves: (" + movesList.size() + ")";                
+                if(colour=="White"){
+                    sendMessage(message, 0);                    
+                }
+                else{
+                    sendMessage(message, 1);
+                }
                 for(int i = 0; i < movesList.size(); i++)
                 {
                     System.out.print(movesList.get(i)+"\t"); //prints the move
+                    message=movesList.get(i)+"\t";
+                    if (colour == "White") {
+                        sendMessage(message, 0);
+                    } else {
+                        sendMessage(message, 1);
+                    }
                     moveCount++;
                     
                     //if line contains 5 moves, print a blank line and reset the number of moves printed
@@ -197,18 +232,14 @@ public class Game
             {
                 String print= colour + " player's turn:";
                 if(curPlayer){
-                    byte[] output1 = print.getBytes();
-                    OutputStream o = players.get(0).getSocket().getOutputStream();
-                    o.write(output1);
-                    InputStream i = players.get(0).getSocket().getInputStream();
-                    
-
-                   // userInput = 
-        
+                    userInput = sendAndReceiveMsgs(print, 0);
                 }
-                System.out.println(colour + " player's turn:");
+                //System.out.println(colour + " player's turn:");
+
                 //userInput = regScan.nextLine();
-                
+                print = colour + " player's turn:";
+                userInput = sendAndReceiveMsgs(print, 0);
+
                 validMove = checkTurnInput(userInput); // move is 'gramatically' correct
                 if (validMove) {
                     moveLegal = checkMoveLegal(userInput); // move is legal according to the game rules
@@ -247,17 +278,19 @@ public class Game
     {
         setCounters();
         String print;
-        print = ("\nWhite: " + white + "\nBlack: " + black + "\n\n");
-        //System.out.println("\nWhite: " + white);
-        //System.out.println("Black: " + black + "\n\n");
+        print = ("\nWhite: " + white + "\nBlack: " + black + "\n\n");        
         System.out.println(print);
         byte[] output1 = print.getBytes();
         
-        for(Player p : players){
+       /*  for(Player p : players){
              
              OutputStream o = p.getSocket().getOutputStream();
              o.write(output1);
              
+             
+        } */
+        for(int i=0;i<2;i++){
+            sendMessage(print, i);
         }
     }
     
@@ -267,7 +300,8 @@ public class Game
      * @param userInput represents user turn input
      * @return validMove returns the validity of move (true - valid/false - invalid)
      */
-    public boolean checkTurnInput(String userInput)
+    
+     public boolean checkTurnInput(String userInput)
     {
         int num;
         boolean validMove = true;
@@ -329,8 +363,7 @@ public class Game
         String letter;
         String numStr;
         int num;
-        int letterNum;
-        
+        int letterNum;        
         boolean[] directions = new boolean[8];//a boolean value that tells if the line was formed in a certain direction
         boolean moveLegal = false;
         
@@ -418,6 +451,7 @@ public class Game
      * 
      * @return moves the list of legals move available for the current player
      */
+
     public ArrayList<String> getAvailableMoves()
     {
         ArrayList<String> moves = new ArrayList<String>(); //stores the available moves
