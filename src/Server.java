@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.io.*;
 public class Server {
 
-	private ServerSocket ss;
+	private ServerSocket serverSocket;
 	private int numJogadores;
 	private String color;
 	private String nome;
@@ -15,7 +15,7 @@ public class Server {
 		System.out.println("Servidor Reversi");
 		numJogadores=0;
 		try {
-			ss = new ServerSocket(50001);
+			serverSocket = new ServerSocket(50001);
 			
 		} catch (IOException e) {
 			System.out.println("Erro no construtor do servidor!!");
@@ -26,7 +26,7 @@ public class Server {
 		try {
 			System.out.println("Aguardando jogadores...");
 			while(numJogadores<2){
-				Socket s = ss.accept();									
+				Socket clientSocket = serverSocket.accept();									
 				numJogadores++;
 				if(numJogadores==1){
 					color="white";
@@ -34,12 +34,12 @@ public class Server {
 					color="black";
 				}
 				byte [] line = new byte[100];
-				InputStream i = s.getInputStream();
-				OutputStream o = s.getOutputStream();
+				InputStream i = clientSocket.getInputStream();
+				OutputStream o = clientSocket.getOutputStream();
 				o.write(line);
 				i.read(line);
 				nome = new String(line);
-				Player p = new Player(s, color,nome);
+				Player p = new Player(clientSocket, color,nome);
 				players.add(p);
 				System.out.println("Jogador #"+ numJogadores + " conectou.");
 			}
