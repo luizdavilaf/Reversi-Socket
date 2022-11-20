@@ -60,8 +60,16 @@ public class Game {
         // o = players.get(playerIndex).getSocket().getOutputStream();
         o.println(endOfMessage);
         o.flush();
-        
+    }
 
+    public void sendBroadCast(String msg) throws IOException{
+        for(int i=0;i<2;i++){
+            o = new PrintWriter(players.get(i).getSocket().getOutputStream(), true);            
+            o.println(msg);
+            o.flush();
+            endMessage(i);
+            endMessage(i);
+        }
     }
 
 
@@ -327,9 +335,10 @@ public class Game {
      * 
      * @param userInput represents user turn input
      * @return validMove returns the validity of move (true - valid/false - invalid)
+     * @throws IOException
      */
 
-    public boolean checkTurnInput(String userInput) {
+    public boolean checkTurnInput(String userInput) throws IOException {
         int num;
         boolean validMove = true;
 
@@ -353,6 +362,8 @@ public class Game {
                     && !letter.equals("D") && !letter.equals("E")
                     && !letter.equals("F") && !letter.equals("G") && !letter.equals("H")) {
                 System.out.print("\nINVALIDLETTER");
+                sendBroadCast("\nLETRA INVALIDA");
+                
                 validMove = false;
             }
 
@@ -364,9 +375,12 @@ public class Game {
                 if (num > 8 || num < 1) {
                     validMove = false;
                     System.out.print("\nWrong number");
+                    sendBroadCast("\nWrong number");
+
                 }
             } catch (NumberFormatException ex) {
                 System.out.print("\nNUMBERFORMAT");
+                sendBroadCast("\nNUMERO INVALIDO");
                 validMove = false;
             }
 
@@ -687,9 +701,10 @@ public class Game {
 
     /**
      * Ends the game stating the winner and getting beck to the main menu
+     * @throws IOException
      * 
      */
-    public void endGame() {
+    public void endGame() throws IOException {
         if (black > white) {
             winner = "black";
         } else if (white > black) {
@@ -700,9 +715,12 @@ public class Game {
 
         if (winner.equals("tie")) {
             System.out.println("It's a tie!");
+            sendBroadCast("EMPATE");
         } else {
             System.out.println("Winner: " + winner + "!");
+            sendBroadCast("Vencedor: " + winner + "!");
         }
-        regScan.nextLine(); // wait until user presses enter key to let him appreciate his victory
+        //ReceiveMsgs(black)
+        //regScan.nextLine(); // wait until user presses enter key to let him appreciate his victory
     }
 }
