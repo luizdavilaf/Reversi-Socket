@@ -65,8 +65,9 @@ public class Field
      * Prints the field
      * 
      */
-    public void printField()
+    public String printField()
     {
+        String fieldString="";
         //loops through the field array and prints it
         for(int i = -1; i<=field.length;i++)
         {
@@ -74,6 +75,7 @@ public class Field
             if(i == -1 || i == field.length)
             {
                 System.out.print("   a b c d e f g h  ");
+                fieldString = fieldString+"___a b c d e f g h  ";
             }
             else
             {
@@ -83,18 +85,25 @@ public class Field
                     if(j == 0)
                     {
                         System.out.print((i+1) + "  " +field[i][j] + " ");
+                        fieldString= fieldString + (i+1) + "  " +field[i][j] + " ";
+                        
                     }
                     else if(j == 7)
                     {
                         System.out.print(field[i][j] + "  " + (i+1));
+                        fieldString =fieldString+(field[i][j] + "  " + (i + 1));
                     }
                     else
                     {
                         System.out.print(field[i][j] + " ");
+                        fieldString =fieldString+(field[i][j] + " ") ;
                     }
                 }
             }
             System.out.println();
+            fieldString =fieldString+("\n");
         }
+        
+        return fieldString;
     }
 }

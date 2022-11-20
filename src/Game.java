@@ -25,15 +25,13 @@ public class Game
     private ArrayList<Player> players = new ArrayList<>(); 
     private String message;
 
-public String sendAndReceiveMsgs(String msg, int playerIndex) throws IOException{    
-    byte[] output1 = msg.getBytes();
-    OutputStream o = players.get(playerIndex).getSocket().getOutputStream();
-    o.write(output1);
+public String ReceiveMsgs(int playerIndex) throws IOException{    
+    byte[] output1= new byte[1000];
+    String msg;
     InputStream i = players.get(playerIndex).getSocket().getInputStream();
     i.read(output1);
-
     msg = new String(output1);
-
+    msg=msg.trim();
     return msg;
     
 }
@@ -43,6 +41,24 @@ public void sendMessage(String msg, int playerIndex) throws IOException {
     OutputStream o = players.get(playerIndex).getSocket().getOutputStream();
     o.write(output1);
     o.flush();
+}
+
+public void endMessage(int playerIndex) throws IOException {
+    String endOfMessage = "--end--";
+    byte[] output1 = endOfMessage.getBytes();
+    OutputStream o = players.get(playerIndex).getSocket().getOutputStream();
+    o.write(output1);
+    o.flush();
+    
+}
+
+public void sendBrodcast() throws IOException {
+    String endOfMessage = "--end--";
+    byte[] output1 = endOfMessage.getBytes();
+    OutputStream o = players.get(0).getSocket().getOutputStream();
+    o.write(output1);
+    o.flush();
+
 }
 
    
@@ -126,6 +142,7 @@ public void sendMessage(String msg, int playerIndex) throws IOException {
         //variables that determine if the first move was already made
         int firstMove = 0;              
         boolean wasFirstMove = false;   
+        String fieldString;
         
         boolean skippedTurn = false; //determines of the previous turn was skipped due to lack of moves
         boolean validMove = false;   //determines if user's input was 'grammatically' correct and can be further processed by the program
@@ -179,7 +196,10 @@ public void sendMessage(String msg, int playerIndex) throws IOException {
                 
             //print the field, update counters, print counters and store available moves
             System.out.println("\u000c");
-            fieldObj.printField();
+            fieldString= fieldObj.printField();
+            for(int i=0;i<2;i++){
+                sendMessage(fieldString, i);
+            }
             displayCounters(); 
             movesList = getAvailableMoves();
             
@@ -195,6 +215,7 @@ public void sendMessage(String msg, int playerIndex) throws IOException {
             {
                 moves = true;
                 int moveCount = 0; //stores the number of printed moves not to print more than 5 moves in a line, to make it more clear
+                
                 System.out.println("Available moves: (" + movesList.size() + ")"); //also prints the number of available moves
                 message = "Available moves: (" + movesList.size() + ")";                
                 if(colour=="White"){
@@ -230,15 +251,36 @@ public void sendMessage(String msg, int playerIndex) throws IOException {
             //if there were moves left for the current player, ask him to make a move
             if(movesLeft.get(colour))
             {
-                String print= colour + " player's turn:";
+                
+                
+                
                 if(curPlayer){
-                    userInput = sendAndReceiveMsgs(print, 0);
+                   if(colour=="White"){
+                       String print = colour + " player's turn:";
+                       System.out.print(print);
+                       sendMessage(print, 0);
+                       endMessage(0);
+                       endMessage(1);
+                       sendMessage("jogada", 0);
+                       userInput = ReceiveMsgs(0);                       
+                       endMessage(1);
+                       System.out.println(userInput);
+                   } 
+                }else{
+                    String print = colour + " player's turn:";
+                    System.out.print(print);
+                    sendMessage(print, 1);
+                    endMessage(1);
+                    endMessage(0);
+                    sendMessage("jogada", 1);
+                    userInput = ReceiveMsgs(1);
+
+                    endMessage(0);
                 }
                 //System.out.println(colour + " player's turn:");
 
                 //userInput = regScan.nextLine();
-                print = colour + " player's turn:";
-                userInput = sendAndReceiveMsgs(print, 0);
+                
 
                 validMove = checkTurnInput(userInput); // move is 'gramatically' correct
                 if (validMove) {
@@ -280,15 +322,6 @@ public void sendMessage(String msg, int playerIndex) throws IOException {
         String print;
         print = ("\nWhite: " + white + "\nBlack: " + black + "\n\n");        
         System.out.println(print);
-        byte[] output1 = print.getBytes();
-        
-       /*  for(Player p : players){
-             
-             OutputStream o = p.getSocket().getOutputStream();
-             o.write(output1);
-             
-             
-        } */
         for(int i=0;i<2;i++){
             sendMessage(print, i);
         }
