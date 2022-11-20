@@ -4,10 +4,12 @@ import javax.swing.text.PlainDocument;
 
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 
 public class Game {
 
@@ -22,43 +24,47 @@ public class Game {
                                // gameFlow()
     private ArrayList<Player> players = new ArrayList<>();
     private String message;
+    private String print = "";
+     private InputStream i;
+   // private OutputStream o; */
+    //private BufferedReader i;
+    private PrintWriter o;
+
 
     public String ReceiveMsgs(int playerIndex) throws IOException {
         byte[] output1 = new byte[1000];
         String msg;
-        InputStream i = players.get(playerIndex).getSocket().getInputStream();
+        i = players.get(playerIndex).getSocket().getInputStream();
         i.read(output1);
         msg = new String(output1);
-        msg = msg.trim();
-        
+        msg = msg.trim();        
         return msg;
 
     }
 
     public void sendMessage(String msg, int playerIndex) throws IOException {
-        byte[] output1 = msg.getBytes();
-        OutputStream o = players.get(playerIndex).getSocket().getOutputStream();
-        o.write(output1);
+        byte[] output1 = new byte[2000];
+        output1 = msg.getBytes();        
+        o = new PrintWriter(players.get(playerIndex).getSocket().getOutputStream(), true);
+        // o = players.get(playerIndex).getSocket().getOutputStream();
+        o.println(msg);
         o.flush();
+        
     }
 
     public void endMessage(int playerIndex) throws IOException {
         String endOfMessage = "--end--";
-        byte[] output1 = endOfMessage.getBytes();
-        OutputStream o = players.get(playerIndex).getSocket().getOutputStream();
-        o.write(output1);
+        byte[] output1 = new byte[2000];
+        output1 = endOfMessage.getBytes();
+        o = new PrintWriter(players.get(playerIndex).getSocket().getOutputStream(), true);
+        // o = players.get(playerIndex).getSocket().getOutputStream();
+        o.println(endOfMessage);
         o.flush();
+        
 
     }
 
-    public void sendBrodcast() throws IOException {
-        String endOfMessage = "--end--";
-        byte[] output1 = endOfMessage.getBytes();
-        OutputStream o = players.get(0).getSocket().getOutputStream();
-        o.write(output1);
-        o.flush();
 
-    }
 
     /*
      * public static void main(String args[]) {
@@ -183,11 +189,12 @@ public class Game {
             }
 
             // print the field, update counters, print counters and store available moves
-            System.out.println("\u000c");
+            System.out.print("\n\u000c");
             fieldString = fieldObj.printField();
             for (int i = 0; i < 2; i++) {
-                sendMessage(fieldString, i);
+                sendMessage(fieldString, i);                
             }
+            
             displayCounters();
             movesList = getAvailableMoves();
 
@@ -203,10 +210,12 @@ public class Game {
                 int moveCount = 0; // stores the number of printed moves not to print more than 5 moves in a line,
                                    // to make it more clear
 
-                System.out.println("Available moves: (" + movesList.size() + ")"); // also prints the number of
-                                                                                   // available moves
-                message = "Available moves: (" + movesList.size() + ")";
-                if (colour == "White") {
+                //System.out.println("Available moves: (" + movesList.size() + ")"); // also prints the number of
+                // available moves
+                message = "Available moves: (" + movesList.size() + ")\n";
+                System.out.print(message);
+                message=message.toString();
+                if (colour == "White") {                                       
                     sendMessage(message, 0);
                 } else {
                     sendMessage(message, 1);
@@ -218,17 +227,18 @@ public class Game {
                         sendMessage(message, 0);
                     } else {
                         sendMessage(message, 1);
-                    }
+                    }                    
                     moveCount++;
 
                     // if line contains 5 moves, print a blank line and reset the number of moves
                     // printed
                     if (moveCount == 5) {
-                        System.out.println();
+                        //System.out.println();
                         moveCount = 0;
                     }
                 }
-                System.out.println("\n");
+                //System.out.println();
+                
             }
 
             // store if there were moves left for the current player
@@ -238,27 +248,31 @@ public class Game {
             if (movesLeft.get(colour)) {
 
                 if (curPlayer && colour == "White") {
-
-                    String print = colour + " player's turn:";
+                    endMessage(1);
+                    endMessage(1);
+                    print = colour + " player's turn:";
                     System.out.print(print);
                     sendMessage(print, 0);
                     endMessage(0);
-                    endMessage(1);
                     sendMessage("jogada", 0);
+                    
+                    
                     userInput = ReceiveMsgs(0);
-                    endMessage(1);
-                    System.out.println(userInput);
+                    
+                    System.out.print("\n"+userInput);
 
                 } else {
-                    String print = colour + " player's turn:";
+                    endMessage(0);
+                    endMessage(0);
+                    print = colour + " player's turn:";
                     System.out.print(print);
                     sendMessage(print, 1);
                     endMessage(1);
-                    endMessage(0);
+                    
                     sendMessage("jogada", 1);
                     userInput = ReceiveMsgs(1);
 
-                    endMessage(0);
+                    
                 }
                 // System.out.println(colour + " player's turn:");
 
@@ -300,9 +314,9 @@ public class Game {
      */
     public void displayCounters() throws IOException {
         setCounters();
-        String print;
+        //String print;
         print = ("\nWhite: " + white + "\nBlack: " + black + "\n\n");
-        System.out.println(print);
+        System.out.print("\n"+print);
         for (int i = 0; i < 2; i++) {
             sendMessage(print, i);
         }
@@ -326,7 +340,7 @@ public class Game {
         // and if the second part of the input is a number
         if (inputLength != 2) {
             validMove = false;
-            System.out.println(userInput.length());
+            System.out.print("\n"+userInput.length());
         } else {
             // splits user input
             String letter = userInput.substring(0, 1);
@@ -338,7 +352,7 @@ public class Game {
                     && !letter.equals("h") && !letter.equals("A") && !letter.equals("B") && !letter.equals("C")
                     && !letter.equals("D") && !letter.equals("E")
                     && !letter.equals("F") && !letter.equals("G") && !letter.equals("H")) {
-                System.out.println("INVALIDLETTER");
+                System.out.print("\nINVALIDLETTER");
                 validMove = false;
             }
 
@@ -349,10 +363,10 @@ public class Game {
                 // if the number is not within the field bounds, turn is invalid
                 if (num > 8 || num < 1) {
                     validMove = false;
-                    System.out.println("Wrong number");
+                    System.out.print("\nWrong number");
                 }
             } catch (NumberFormatException ex) {
-                System.out.println("NUMBERFORMAT");
+                System.out.print("\nNUMBERFORMAT");
                 validMove = false;
             }
 
@@ -662,10 +676,10 @@ public class Game {
         } else if (!curPlayer) {
             colour = "White";
         }
-        System.out.println("\u000c");
+        System.out.print("\n\u000c");
         fieldObj.printField();
         displayCounters();
-        System.out.println(colour + " wins.\n(PRESS ENTER)");
+        System.out.print("\n"+colour + " wins.\n(PRESS ENTER)");
         regScan.nextLine(); // waits until user presses enter to let him appreciate his victory and view the
                             // field
         return;

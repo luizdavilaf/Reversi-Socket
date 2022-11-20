@@ -41,7 +41,9 @@ public class Server {
 				nome = new String(line);
 				Player p = new Player(clientSocket, color, nome);
 				players.add(p);
-				System.out.println("Jogador #" + numJogadores + " conectou.");
+				System.out.println("Jogador #" + numJogadores+" "+nome + " conectou.");
+				output.flush();
+				
 			}
 			System.out.println("Dois jogadores conectados. Iniciando jogo...");
 
