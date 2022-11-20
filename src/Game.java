@@ -1,4 +1,6 @@
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.text.PlainDocument;
 
@@ -29,6 +31,7 @@ public class Game {
    // private OutputStream o; */
     //private BufferedReader i;
     private PrintWriter o;
+    private Server server;
 
 
     public String ReceiveMsgs(int playerIndex) throws IOException {
@@ -90,6 +93,7 @@ public class Game {
         surrender = false;
         winner = "UNDEFINED"; // sets winned to undefined as the game has just begun
         this.players = players;
+        this.server = server;
     }
 
     /**
@@ -718,9 +722,20 @@ public class Game {
             sendBroadCast("EMPATE");
         } else {
             System.out.println("Winner: " + winner + "!");
-            sendBroadCast("Vencedor: " + winner + "!");
+            sendBroadCast("Vencedor: " + winner + "! \nO Servidor será finalizado em 15 segundos...");
         }
+        
+        Timer tempo = new Timer();
+        tempo.schedule(new RemindTask(), 15000);
+        System.exit(0);
         //ReceiveMsgs(black)
         //regScan.nextLine(); // wait until user presses enter key to let him appreciate his victory
+    }
+
+    class RemindTask extends TimerTask {
+        public void run() {
+            server.closeServer(); 
+            System.exit(0);
+        }
     }
 }
