@@ -55,12 +55,13 @@ public class Cliente {
 		boolean sent = false;
 		try {
 			while (sent==false) {
-				byte[] line = new byte[1500];
+				byte[] line = new byte[2500];
 				mensagemRecebida = mensagemRecebida.trim();
 				if(mensagemRecebida.contains("jogada")){
 					System.out.println("Escolha sua jogada");
 					System.in.read(line);
 					output.write(line);
+					sent = true;
 				}else{
 					System.out.println("Espere o movimento do adversario\n");
 				}
