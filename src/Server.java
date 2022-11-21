@@ -10,6 +10,7 @@ public class Server {
 	private String color;
 	private String nome;
 	private ArrayList<Player> players = new ArrayList<>();
+	private boolean gameStatus;
 
 	public Server() {
 		System.out.println("Servidor Reversi");
@@ -59,16 +60,22 @@ public class Server {
 		}
 	}
 
+	public boolean inciaJogo() throws IOException {
+		ArrayList<Player> players = this.acceptConnections();
+		System.out.println(players.toString());
+		Game game = new Game(players, this);
+		gameStatus= game.startGame();
+		return gameStatus;
+		
+	}
+
 	
 
 	public static void main(String[] args) throws IOException {
 
 		Server server = new Server();
-		ArrayList<Player> players = server.acceptConnections();
-		System.out.println(players.toString());
-
-		Game game = new Game(players, server);
-		game.startGame();
+		server.inciaJogo();
+		
 		
 		
 

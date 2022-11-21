@@ -108,10 +108,11 @@ public class Game {
      * @throws IOException
      * 
      */
-    public void startGame() throws IOException {
+    public boolean startGame() throws IOException {
         field = fieldObj.setField();
         curPlayer = fieldObj.getFirstTurn();
-        gameFlow();
+        this.gameFinished =gameFlow();
+        return this.gameFinished;
     }
 
     /**
@@ -151,7 +152,7 @@ public class Game {
      * @throws IOException
      * 
      */
-    public void gameFlow() throws IOException {
+    public boolean gameFlow() throws IOException {
         // variables that determine if the first move was already made
         int firstMove = 0;
         boolean wasFirstMove = false;
@@ -326,12 +327,13 @@ public class Game {
         // if the game was finished, define the winner and print it
         if (gameFinished) {
             endGame();
+            return gameFinished;
         }
 
         // reset the values of the variables
         gameFinished = false;
         surrender = false;
-        return;
+        return gameFinished;
     }
 
     /**
