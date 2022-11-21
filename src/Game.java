@@ -32,7 +32,7 @@ public class Game {
     //private BufferedReader i;
     private PrintWriter o;
     private Server server;
-
+    protected boolean gameFinished = false; // determines if the game was finished or not
 
     public String ReceiveMsgs(int playerIndex) throws IOException {
         byte[] output1 = new byte[1000];
@@ -94,6 +94,11 @@ public class Game {
         winner = "UNDEFINED"; // sets winned to undefined as the game has just begun
         this.players = players;
         this.server = server;
+        this.gameFinished = false;
+    }
+
+    public boolean getGameStatus(){
+        return this.gameFinished;
     }
 
     /**
@@ -158,7 +163,7 @@ public class Game {
         boolean moveLegal = false; // determines if the user's input was a legal move, allowed by the game rules
         String userInput = "";
         int infinite = 0; // while it's equal to 0, loop runs. it always is equal to 0
-        boolean gameFinished = false; // determines if the game was finished or not
+        gameFinished = false; // determines if the game was finished or not
 
         HashMap<String, Boolean> movesLeft = new HashMap<String, Boolean>();
         ArrayList<String> movesList = new ArrayList<String>(); // stores the available moves for the current player
@@ -216,7 +221,18 @@ public class Game {
                 moves = false;
                 skippedTurn = true;
                 System.out.println(colour + " ,you don't have any moves left. Skipping turn. (press ENTER)");
-                regScan.nextLine();
+                if(colour=="White"){
+                    sendMessage(colour + " ,you don't have any moves left. Skipping turn. (press ENTER)",0 );
+                    endMessage(0);
+                    sendMessage("jogada",0);
+                    ReceiveMsgs(0);
+                }else{
+                    sendMessage(colour + " ,you don't have any moves left. Skipping turn. (press ENTER)", 1);
+                    endMessage(1);
+                    sendMessage("jogada", 1);
+                    ReceiveMsgs(1);                    
+                }
+                
             } else {
                 moves = true;
                 int moveCount = 0; // stores the number of printed moves not to print more than 5 moves in a line,
@@ -722,20 +738,38 @@ public class Game {
             sendBroadCast("EMPATE");
         } else {
             System.out.println("Winner: " + winner + "!");
-            sendBroadCast("Vencedor: " + winner + "! \nO Servidor será finalizado em 15 segundos...");
+            String msg = "";
+            String nomeVencedor="";
+            if(winner== "white"){
+                nomeVencedor = players.get(0).getName();
+                msg = "Vencedor: " +nomeVencedor+" cor: "+ winner + "! \nO Servidor será finalizado em 15 segundos...";
+            }else{
+                nomeVencedor = players.get(1).getName();
+                msg = "Vencedor: " + nomeVencedor + " cor: " + winner
+                        + "! \nO Servidor será finalizado em 15 segundos...";
+            }
+            sendBroadCast(msg);
         }
         
         Timer tempo = new Timer();
-        tempo.schedule(new RemindTask(), 15000);
-        System.exit(0);
+        tempo.schedule(new RemindTask(), 15000);        
         //ReceiveMsgs(black)
         //regScan.nextLine(); // wait until user presses enter key to let him appreciate his victory
     }
 
     class RemindTask extends TimerTask {
         public void run() {
-            server.closeServer(); 
-            System.exit(0);
+            try {
+                players.get(0).getSocket().close();
+                players.get(1).getSocket().close();
+                players.clear();
+                
+            } catch (IOException e) {
+                System.out.println("Erro ao finalizar sockets");
+                e.printStackTrace();
+            }
+
+            
         }
     }
 }

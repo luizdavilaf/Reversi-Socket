@@ -6,6 +6,9 @@
  */
 public class Field
 {
+    public static final String TIRA_COR = "\u001B[0m";
+    public static final String FUNDO_BRANCO ="\u001B[47m";
+    public static final String LETRA_VERDE = "\u001B[32m";
     private String[][] field; //the field array
     final int FIELDSIZE; //size of the field
     private boolean firstTurn = true; //stores the player, who has the first turn after the field was loaded

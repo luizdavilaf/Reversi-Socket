@@ -34,15 +34,13 @@ public class Server {
 					color = "black";
 				}
 				byte[] line = new byte[100];
-				InputStream input = clientSocket.getInputStream();
-				OutputStream output = clientSocket.getOutputStream();
-				output.write(line);
+				InputStream input = clientSocket.getInputStream();				
 				input.read(line);
 				nome = new String(line);
 				Player p = new Player(clientSocket, color, nome);
 				players.add(p);
 				System.out.println("Jogador #" + numJogadores+" "+nome + " conectou.");
-				output.flush();
+				
 				
 			}
 			System.out.println("Dois jogadores conectados. Iniciando jogo...");
@@ -61,6 +59,8 @@ public class Server {
 		}
 	}
 
+	
+
 	public static void main(String[] args) throws IOException {
 
 		Server server = new Server();
@@ -69,6 +69,8 @@ public class Server {
 
 		Game game = new Game(players, server);
 		game.startGame();
+		
+		
 
 	}
 
